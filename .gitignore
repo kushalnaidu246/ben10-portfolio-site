@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Local editor/preview config
+.claude/
+
+# Source and archived images (not used by the site)
+assets/Gemini_Generated_Image_*.png
+assets/originals/
+assets/unused/

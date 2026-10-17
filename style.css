@@ -1,0 +1,1330 @@
+/* BEN 10 — OMNITRIX EXPERIENCE CINEMATIC STYLESHEET */
+
+:root {
+  --omni-green: #00ff66;
+  --omni-green-bright: #39ff14;
+  --omni-green-dim: #00883a;
+  --omni-green-dark: #003314;
+  --omni-black: #050805;
+  --omni-deep-black: #000000;
+  --omni-chassis: #1a1e1b;
+  --omni-chassis-light: #2d3630;
+  
+  --font-display: 'Orbitron', -apple-system, sans-serif;
+  --font-tech: 'Rajdhani', -apple-system, sans-serif;
+  --font-body: 'Syne', -apple-system, sans-serif;
+
+  --glow-omni: 0 0 25px rgba(0, 255, 102, 0.6), 0 0 50px rgba(0, 255, 102, 0.25);
+  --glow-omni-intense: 0 0 35px rgba(0, 255, 102, 0.9), 0 0 70px rgba(0, 255, 102, 0.45);
+  --glass-bg: rgba(10, 16, 12, 0.65);
+  --glass-border: rgba(0, 255, 102, 0.2);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--omni-deep-black);
+  color: #ffffff;
+  font-family: var(--font-body);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--omni-deep-black);
+  min-height: 100vh;
+  overflow-x: clip;
+  position: relative;
+  user-select: none;
+}
+
+/* Fixed Canvas for VFX Particles (screen-blended above sections so it stays visible) */
+.fixed-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 60;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Atmospheric Overlays */
+.cinematic-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.75) 85%, rgba(0, 0, 0, 0.95) 100%);
+}
+
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 255, 102, 0.015) 3px,
+    rgba(0, 255, 102, 0.015) 4px
+  );
+  opacity: 0.6;
+}
+
+/* Screen Transformation Flash */
+.transformation-flash {
+  position: fixed;
+  inset: 0;
+  background: #00ff66;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+  mix-blend-mode: screen;
+}
+
+/* (Top HUD Header removed for pure cinematic fullscreen immersion) */
+
+/* ============================================================ */
+/* ACT 1 & ACT 2: PINNED HERO & OMNITRIX ACTIVATION VIEWPORT    */
+/* ============================================================ */
+.story-pin-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #020402;
+  z-index: 10;
+}
+
+.hero-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Static backdrop: dark green energy field behind Ben */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background:
+    radial-gradient(ellipse 45% 70% at 72% 55%, rgba(0, 255, 102, 0.22) 0%, rgba(0, 120, 50, 0.08) 45%, transparent 70%),
+    radial-gradient(circle at 20% 30%, rgba(0, 255, 102, 0.06) 0%, transparent 40%),
+    linear-gradient(180deg, #020604 0%, #031208 60%, #010302 100%);
+}
+
+.hero-backdrop::after {
+  /* Floor glow under Ben's feet */
+  content: '';
+  position: absolute;
+  left: 50%;
+  right: 0;
+  bottom: 0;
+  height: 18vh;
+  background: radial-gradient(ellipse 50% 60% at 50% 100%, rgba(0, 255, 102, 0.25), transparent 70%);
+}
+
+/* Intro film strip. Opens on the right like a portrait; JS then moves/scales it to fill
+   the screen and pans to keep the Omnitrix centred. --feather softens the left/right
+   edges into the backdrop while it is still a panel. */
+.intro-panel {
+  --feather: 14%;
+  position: absolute;
+  top: 0;
+  right: 6vw;
+  height: 100vh;
+  aspect-ratio: 1080 / 1935;
+  z-index: 10;
+  background: #000;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--feather), #000 calc(100% - var(--feather)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--feather), #000 calc(100% - var(--feather)), transparent 100%);
+}
+
+.intro-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  /* --fx/--fy: where the light bursts from (over Ben while he is still a portrait) */
+  background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgba(240, 255, 230, 0.95) 0%, rgba(57, 255, 20, 0.65) 35%, rgba(0, 60, 20, 0.2) 65%, transparent 80%);
+}
+
+.intro-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.intro-frame:first-child {
+  opacity: 1;
+}
+
+/* Fixed Omnitrix Dial Layer: centred in the hero, docked beside the aliens later */
+.omnitrix-macro-layer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.omnitrix-device-container {
+  position: relative;
+  width: min(85vw, 62vh, 540px);
+  height: min(85vw, 62vh, 540px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.omnitrix-chassis {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(0, 255, 102, 0.4), inset 0 0 40px rgba(0, 0, 0, 0.9);
+}
+
+.omni-face-live {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.select-silhouette-wrap {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.select-silhouette {
+  /* Black DNA silhouette: the alien's own transparent render used as a mask */
+  /* Box fits inside the open diamond (half-diagonal 58 of the 200-unit dial) */
+  position: absolute;
+  left: 37%;
+  right: 37%;
+  top: 34%;
+  bottom: 34%;
+  background: rgba(8, 24, 4, 0.88);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  /* keep it inside the green diamond */
+  clip-path: polygon(50% -40.7%, 161.4% 50%, 50% 140.7%, -61.4% 50%);
+}
+
+
+/* Sci-fi overlay ring: hidden now that the dial has a real watch housing (still animated by JS) */
+.dial-rotator-overlay {
+  display: none;
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 3px dashed rgba(0, 255, 102, 0.4);
+  pointer-events: none;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.dial-pip {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--omni-green);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--omni-green);
+}
+.pip-top { top: 4px; left: calc(50% - 6px); }
+.pip-bottom { bottom: 4px; left: calc(50% - 6px); }
+.pip-left { left: 4px; top: calc(50% - 6px); }
+.pip-right { right: 4px; top: calc(50% - 6px); }
+
+.omni-laser-sight {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 102, 0.8), transparent);
+}
+
+.omni-glow-core {
+  position: absolute;
+  top: 34%;
+  left: 34%;
+  width: 32%;
+  height: 32%;
+  opacity: 0.6;
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.omni-glow-core::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(57, 255, 20, 0.8) 0%, rgba(0, 255, 102, 0.3) 60%, transparent 80%);
+  animation: core-pulse 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes core-pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.25); opacity: 1; }
+}
+
+/* Hologram Emitter & Rings */
+.hologram-emitter {
+  position: absolute;
+  inset: -20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.holo-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--omni-green);
+  opacity: 0.4;
+  box-shadow: 0 0 20px var(--omni-green);
+}
+
+.holo-ring-1 {
+  width: 70%;
+  height: 70%;
+  border-style: solid;
+  animation: spin-cw 12s linear infinite;
+}
+
+.holo-ring-2 {
+  width: 90%;
+  height: 90%;
+  border-style: dashed;
+  animation: spin-ccw 16s linear infinite;
+}
+
+.holo-ring-3 {
+  width: 110%;
+  height: 110%;
+  border-style: dotted;
+  border-width: 3px;
+  animation: spin-cw 20s linear infinite;
+}
+
+@keyframes spin-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-ccw {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* Mechanical Pop Pistons */
+.omni-piston {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 48px;
+  background: linear-gradient(180deg, #555, #222);
+  border: 1px solid #777;
+  border-radius: 4px;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+.piston-left { left: -16px; }
+.piston-right { right: -16px; }
+
+/* Initial Minimal Opening Screen Text */
+.opening-hero-text {
+  position: absolute;
+  top: 16vh;
+  left: 6vw;
+  max-width: min(620px, 50vw);
+  z-index: 25;
+  pointer-events: none;
+}
+
+.alien-quote-tag {
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--omni-green);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alien-quote-tag::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: var(--omni-green);
+  box-shadow: 0 0 6px var(--omni-green);
+}
+
+.hero-cinematic-title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.title-sub {
+  font-family: var(--font-tech);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  color: #9cd4a7;
+}
+
+.title-main {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 0.95;
+  background: linear-gradient(180deg, #ffffff 10%, #7eff9e 60%, #00993a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 25px rgba(0, 255, 102, 0.4));
+}
+
+.hero-cinematic-desc {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #8da392;
+  max-width: 480px;
+}
+
+/* Scroll Cue at Bottom */
+.scroll-cue {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.scroll-energy-line {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, var(--omni-green));
+  box-shadow: 0 0 8px var(--omni-green);
+  animation: line-glow 1.6s infinite ease-in-out;
+}
+
+@keyframes line-glow {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+.scroll-label {
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  color: #c4ffd4;
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.8);
+}
+
+.scroll-chevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--omni-green);
+  border-bottom: 2px solid var(--omni-green);
+  transform: rotate(45deg);
+  animation: chevron-pulse 1.4s infinite alternate;
+}
+.chevron:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chevron-pulse {
+  0% { opacity: 0.2; transform: translateY(-3px) rotate(45deg); }
+  100% { opacity: 1; transform: translateY(3px) rotate(45deg); }
+}
+
+/* ============================================================ */
+/* ACT 3 & ACT 4: ALIEN SHOWCASE PAGES                           */
+/* ============================================================ */
+.aliens-viewport-section {
+  position: relative;
+  width: 100%;
+  background: #000000;
+  z-index: 30;
+}
+
+/* Sticky Alien Navigation HUD */
+.alien-sticky-nav {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 36px;
+  backdrop-filter: blur(12px);
+  background: rgba(4, 8, 5, 0.85);
+  border-bottom: 1px solid rgba(0, 255, 102, 0.15);
+}
+
+.nav-right-cluster {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-dial-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 255, 102, 0.1);
+  border: 1px solid var(--omni-green);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-dial-btn:hover {
+  background: var(--omni-green);
+  color: #000000;
+  box-shadow: var(--glow-omni);
+}
+
+.mini-omni-core {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--omni-green);
+  box-shadow: 0 0 6px var(--omni-green);
+}
+
+.nav-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(10, 20, 14, 0.8);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-arrow-btn:hover {
+  background: var(--omni-green);
+  color: #000000;
+  box-shadow: var(--glow-omni);
+  transform: scale(1.1);
+}
+
+.alien-nodes-carousel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alien-nav-node {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0d140f;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-tech);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888888;
+  transition: all 0.25s ease;
+}
+
+.alien-nav-node:hover {
+  border-color: var(--omni-green);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.alien-nav-node.active {
+  background: var(--omni-green);
+  color: #000000;
+  border-color: #ffffff;
+  box-shadow: 0 0 15px var(--omni-green);
+  transform: scale(1.15);
+}
+
+.alien-counter-badge {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.current-num {
+  color: var(--omni-green);
+  text-shadow: 0 0 10px var(--omni-green);
+  font-size: 1.35rem;
+}
+
+.divider {
+  color: #555555;
+}
+
+.total-num {
+  color: #888888;
+}
+
+/* Individual Alien Showcase Page */
+.alien-showcase-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 5vw 60px 5vw;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.alien-bg-aura {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.alien-content-grid {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); /* left column is reserved for the docked Omnitrix */
+  align-items: center;
+  gap: clamp(30px, 5vw, 80px);
+  z-index: 10;
+}
+
+.dial-dock-spacer {
+  min-height: 1px;
+}
+
+/* Photo + key details side by side */
+.alien-hero-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.alien-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.alien-hero-row .alien-details-box {
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+
+.alien-hero-row .alien-quote-pill {
+  flex-basis: 100%;
+}
+
+.alien-hero-row .alien-poster-frame {
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 280px;
+}
+
+/* ---------- Stage mode (desktop): one alien per screen, switched by the dial ---------- */
+.aliens-viewport-section.is-stage .aliens-list {
+  position: relative;
+  overflow: hidden;
+}
+
+.aliens-viewport-section.is-stage .alien-showcase-page {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: 100%;
+  padding: 16px 5vw;
+}
+
+.aliens-viewport-section.is-stage .alien-data-column {
+  gap: 12px;
+  transform-origin: center center; /* JS scales it to fit the stage height */
+}
+
+.aliens-viewport-section.is-stage .powers-container {
+  gap: 6px;
+}
+
+.aliens-viewport-section.is-stage .alien-action-footer {
+  margin-top: 0;
+}
+
+.aliens-viewport-section.is-stage .alien-name-title {
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+}
+
+.aliens-viewport-section.is-stage .alien-description-text {
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.aliens-viewport-section.is-stage .stats-matrix {
+  padding: 12px 16px;
+  gap: 7px;
+}
+
+/* Alien Character Visual Presentation */
+.alien-visual-column {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.alien-poster-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.08), rgba(5, 8, 5, 0.95) 70%);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* No CSS transform transition here: GSAP drives this element's transform */
+  transition: box-shadow 0.4s ease;
+}
+
+.alien-character-img {
+  /* Official renders are transparent cut-outs: contain them above the tag */
+  position: absolute;
+  inset: 6% 8% 64px 8%;
+  width: 84%;
+  height: calc(94% - 64px);
+  object-fit: contain;
+  object-position: center bottom;
+  transition: transform 0.6s ease;
+}
+
+.alien-poster-frame:hover .alien-character-img {
+  transform: scale(1.04);
+}
+
+.alien-frame-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 75%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+}
+
+.alien-dna-hologram-tag {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  flex-wrap: wrap;
+  gap: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(10, 15, 12, 0.75);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.tag-badge {
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--omni-green);
+}
+
+.tag-status {
+  font-family: var(--font-tech);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+/* Right Side: Alien Profile & High-Tech Data Readout */
+.alien-data-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alien-meta-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.alien-index-pill {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(0, 255, 102, 0.15);
+  border: 1px solid var(--omni-green);
+  color: var(--omni-green);
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+}
+
+.alien-species-label {
+  font-family: var(--font-tech);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #a0b8a6;
+}
+
+.alien-name-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.alien-details-box {
+  display: flex;
+  gap: 28px;
+  padding: 16px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-family: var(--font-tech);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #7b9481;
+}
+
+.detail-val {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.alien-description-text {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #b8c9bc;
+}
+
+/* Powers Tags */
+.powers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.powers-heading {
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--omni-green);
+}
+
+.powers-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.power-tag {
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e5ffe8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.power-tag::before {
+  content: '⚡';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Combat Stats Matrix */
+.stats-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 22px;
+  background: rgba(6, 12, 8, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.stats-matrix-title {
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #8da392;
+  margin-bottom: 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 40px;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-name {
+  font-family: var(--font-tech);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #d1e2d5;
+}
+
+.stat-bar-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: right;
+}
+
+/* Alien Action Footer */
+.alien-action-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.transform-now-btn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background: var(--omni-green);
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--glow-omni);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+
+.transform-now-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--glow-omni-intense);
+}
+
+.alien-quote-pill {
+  font-family: var(--font-tech);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #9ab3a0;
+  padding-left: 12px;
+  border-left: 2px solid var(--omni-green);
+}
+
+/* ============================================================ */
+/* INTERACTIVE OMNITRIX DIAL MODAL                             */
+/* ============================================================ */
+.dial-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.dial-modal:not(.open) .orbit-slot-btn {
+  pointer-events: none; /* closed modal: don't let its invisible buttons catch hovers/clicks */
+}
+
+.dial-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dial-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(14px);
+}
+
+.dial-modal-content {
+  position: relative;
+  width: min(92vw, 680px);
+  padding: 36px 32px;
+  background: radial-gradient(circle, #0e1a12 0%, #050805 100%);
+  border: 1px solid var(--omni-green);
+  box-shadow: var(--glow-omni-intense);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.dial-modal-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-tag {
+  font-family: var(--font-tech);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--omni-green);
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: #ff3344;
+  border-color: #ff3344;
+}
+
+.dial-rotary-wheel-container {
+  position: relative;
+  width: min(75vw, 420px);
+  height: min(75vw, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.wheel-core {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--omni-green);
+  box-shadow: 0 0 35px var(--omni-green);
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+.wheel-core:hover {
+  transform: scale(1.06);
+}
+
+.wheel-core-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.orbiting-alien-slots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbit-slot-btn {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #09120c;
+  border: 2px solid rgba(0, 255, 102, 0.4);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 800;
+  pointer-events: auto;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.orbit-slot-btn:hover {
+  background: var(--omni-green);
+  color: #000000;
+  border-color: #ffffff;
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow: 0 0 20px var(--omni-green);
+}
+
+.dial-modal-footer {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.tip-text {
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: #799480;
+}
+
+/* ============================================================ */
+/* RESPONSIVE DESIGN FOR TABLETS & MOBILE                       */
+/* ============================================================ */
+@media (max-width: 1024px) {
+  .alien-content-grid {
+    gap: 36px;
+  }
+
+  .alien-data-column {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 900px) {
+  .alien-content-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .dial-dock-spacer {
+    display: none; /* the Omnitrix docks in the corner instead */
+  }
+
+  .opening-hero-text {
+    left: 32px;
+    right: 32px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .alien-sticky-nav {
+    top: 0;
+    padding: 10px 16px;
+  }
+
+  .alien-nav-node:nth-child(n+7) {
+    display: none; /* Show top 6 on small mobile */
+  }
+
+  .opening-hero-text {
+    top: 10vh;
+    left: 20px;
+    right: 20px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+  }
+
+  /* Centred under the title; width = 72vh * 1080/1935 */
+  .intro-panel {
+    top: auto;
+    bottom: 0;
+    right: auto;
+    left: calc(50% - 20.1vh);
+    height: 72vh;
+  }
+
+  .alien-sticky-nav {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-cinematic-title .title-main {
+    font-size: 2.8rem;
+  }
+
+  .alien-showcase-page {
+    padding: 90px 4vw 40px 4vw;
+  }
+
+  .alien-name-title {
+    font-size: 2.5rem;
+  }
+
+  .alien-details-box {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .alien-hero-row {
+    grid-template-columns: 1fr;
+  }
+
+  .alien-hero-row .alien-details-box {
+    flex-wrap: nowrap;
+  }
+
+  .alien-hero-row .alien-quote-pill {
+    flex-basis: auto;
+  }
+
+  .alien-visual-column {
+    max-width: 360px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .stat-row {
+    grid-template-columns: 90px 1fr 35px;
+  }
+}
+
+/* Reduced Motion Preference Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
